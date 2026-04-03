@@ -5,13 +5,17 @@ import { StatusBar } from 'react-native';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { COLORS } from './src/theme/colors';
 
+import { UserProvider } from './src/context/UserContext';
+
 function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
+      <UserProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </UserProvider>
     </SafeAreaProvider>
   );
 }

@@ -10,7 +10,13 @@ import {
   FlatList,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { useUser } from '../context/UserContext';
 import { COLORS } from '../theme/colors';
+
+type HomeNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 import { JourneyCard, Journey } from '../components/JourneyCard';
 import { InspirationCard, Inspiration } from '../components/InspirationCard';
 import { MomentCard, Moment } from '../components/MomentCard';
@@ -79,6 +85,8 @@ const MOMENTS: Moment[] = [
 
 export function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<HomeNavigationProp>();
+  const { name, photoUrl } = useUser();
   const [activeTab, setActiveTab] = useState('Journeys');
 
   return (
@@ -89,13 +97,17 @@ export function HomeScreen() {
         <View style={[styles.header, { marginTop: insets.top + 20 }]}>
           <View>
             <Text style={styles.greeting}>Welcome back,</Text>
-            <Text style={styles.appName}>Safarnama</Text>
+            <Text style={styles.appName}>{name ? name.split(' ')[0] : 'Traveler'}</Text>
           </View>
-          <TouchableOpacity style={styles.profileAvatar}>
-            <Image 
-              source={{ uri: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop' }} 
-              style={styles.avatarImage} 
-            />
+          <TouchableOpacity 
+            style={styles.profileAvatar}
+            onPress={() => navigation.navigate('Profile')}
+          >
+            {photoUrl ? (
+              <Image source={{ uri: photoUrl }} style={styles.avatarImage} />
+            ) : (
+              <View style={[styles.avatarImage, { backgroundColor: COLORS.surface }]} />
+            )}
           </TouchableOpacity>
         </View>
 
