@@ -26,61 +26,91 @@ const { width } = Dimensions.get('window');
 const JOURNEYS: Journey[] = [
   {
     id: '1',
-    title: 'Kyoto Echoes',
+    title: 'Himalayan Echoes',
     date: 'Oct 12 - Oct 20',
-    location: 'Japan',
-    imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop',
+    location: 'Himachal, India',
+    imageUrl: require('../assets/images/Himachal.png'),
     tags: ['Culture', 'Serene'],
   },
   {
     id: '2',
-    title: 'Alpine Whispers',
+    title: 'The Divine Rishikesh',
     date: 'Dec 05 - Dec 14',
-    location: 'Switzerland',
-    imageUrl: 'https://images.unsplash.com/photo-1531366936010-27c57f9273f4?q=80&w=1000&auto=format&fit=crop',
+    location: 'Uttarakhand, India',
+    imageUrl: require('../assets/images/uttarakhand.png'),
     tags: ['Nature', 'Cold'],
   },
   {
     id: '3',
     title: 'Golden Sands',
     date: 'Feb 10 - Feb 18',
-    location: 'Morocco',
-    imageUrl: 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=1000&auto=format&fit=crop',
+    location: 'Rajasthan, India',
+    imageUrl: require('../assets/images/rajastan.png'),
     tags: ['Desert', 'Warm'],
   },
 ];
 
 const INSPIRATION: Inspiration[] = [
-  { id: '1', imageUrl: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=600&auto=format&fit=crop', title: 'Hidden Trails' },
-  { id: '2', imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=600&auto=format&fit=crop', title: 'Ocean Views' },
-  { id: '3', imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=600&auto=format&fit=crop', title: 'City Lights' },
+  {
+    id: '9',
+    imageUrl: require('../assets/images/spiti.png'),
+    title: 'Spiti: Little Tibet',
+    location: 'Spiti Valley',
+  },
+  {
+    id: '11',
+    imageUrl: require('../assets/images/Ladakh.png'),
+    title: 'Ladakh',
+    location: 'Ladakh',
+  },
+  {
+    id: '6',
+    imageUrl: require('../assets/images/valley of flowes.png'),
+    title: 'Valley of Flowers',
+    location: 'Uttarakhand',
+  },
+  {
+    id: '5',
+    imageUrl: require('../assets/images/uttarakhand.png'),
+    title: 'Yoga in Rishikesh',
+    location: 'Uttarakhand',
+  },
+];
+
+const REGIONS = [
+  { name: 'Himachal', icon: '🏔️', color: '#E0F2FE' },
+  { name: 'Uttarakhand', icon: '🌊', color: '#F0FDF4' },
+  { name: 'All Places', icon: '🌍', color: '#FFF7ED' },
 ];
 
 const MOMENTS: Moment[] = [
   {
     id: '1',
-    photoUrl: 'https://images.unsplash.com/photo-1512100356356-de1b84283e18?q=80&w=1000&auto=format&fit=crop',
-    title: 'Morning in the Medina',
-    description: 'Waking up early to catch the first light hitting the ancient walls. The city was quiet, save for the distant sound of merchants setting up their stalls.',
+    photoUrl: require('../assets/images/kinnaur.png'), // Corrected to existing file
+    title: 'Morning in Kinnaur',
+    description:
+      'Waking up early to catch the first light hitting the majestic Kinner Kailash. The silence was soul-stirringly beautiful.',
     date: 'Feb 12, 2026',
-    location: 'Marrakech, Morocco'
+    location: 'Kalpa, Himachal',
   },
   {
     id: '2',
-    photoUrl: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1000&auto=format&fit=crop', 
-    title: 'The Unending Valleys',
-    description: 'A difficult hike but the views from the summit at dawn made every step worth it. The mist was settling deep into the valley, creating an ocean of clouds.',
+    photoUrl: require('../assets/images/rishikesh.png'), // Corrected to existing file
+    title: 'The Divine Rishikesh',
+    description:
+      'Walking across the suspension bridge as the sun began to set over the Ganges. The sound of evening Aarti was starting to drift across the water.',
     date: 'Jan 04, 2026',
-    location: 'Swiss Alps'
+    location: 'Rishikesh, Uttarakhand',
   },
   {
     id: '3',
-    photoUrl: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?q=80&w=1000&auto=format&fit=crop', 
-    title: 'Café Culture',
-    description: 'Spent the whole afternoon watching people pass by. Black coffee, a worn out paperback, and the faint hum of Parisian streets. Perfect stillness.',
+    photoUrl: require('../assets/images/Jaipur.png'), // Corrected to existing file (rajastan.png)
+    title: 'Jaipur Wanderlust',
+    description:
+      'Spent the whole afternoon exploring the Pink City. The intricate architecture and vibrant colors tell a story at every turn.',
     date: 'Nov 22, 2025',
-    location: 'Paris, France'
-  }
+    location: 'Jaipur, Rajasthan',
+  },
 ];
 
 export function HomeScreen() {
@@ -89,52 +119,80 @@ export function HomeScreen() {
   const { name, photoUrl } = useUser();
   const [activeTab, setActiveTab] = useState('Journeys');
 
+  const avatarSource =
+    typeof photoUrl === 'string' ? { uri: photoUrl } : photoUrl;
+
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 40 }]}>
-        
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 40 },
+        ]}
+      >
         {/* Header Section */}
         <View style={[styles.header, { marginTop: insets.top + 20 }]}>
           <View>
             <Text style={styles.greeting}>Welcome back,</Text>
-            <Text style={styles.appName}>{name ? name.split(' ')[0] : 'Traveler'}</Text>
+            <Text style={styles.appName}>
+              {name ? name.split(' ')[0] : 'Traveler'}
+            </Text>
           </View>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.profileAvatar}
             onPress={() => navigation.navigate('Profile')}
           >
             {photoUrl ? (
-              <Image source={{ uri: photoUrl }} style={styles.avatarImage} />
+              <Image source={avatarSource} style={styles.avatarImage} />
             ) : (
-              <View style={[styles.avatarImage, { backgroundColor: COLORS.surface }]} />
+              <View
+                style={[
+                  styles.avatarImage,
+                  { backgroundColor: COLORS.surface },
+                ]}
+              />
             )}
           </TouchableOpacity>
         </View>
 
         {/* Hero Section */}
-        <TouchableOpacity activeOpacity={0.9} style={styles.heroContainer}>
-          <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1200&auto=format&fit=crop' }} 
-            style={styles.heroImage} 
+        <TouchableOpacity
+          activeOpacity={0.9}
+          style={styles.heroContainer}
+          onPress={() =>
+            navigation.navigate('MyStories', { location: 'Uttarakhand' })
+          }
+        >
+          <Image
+            source={require('../assets/images/valley of flowes.png')}
+            style={styles.heroImage}
           />
           <View style={styles.heroOverlay}>
             <View style={styles.heroBadge}>
               <Text style={styles.heroBadgeText}>Next Adventure</Text>
             </View>
             <Text style={styles.heroTitle}>Valley of Flowers</Text>
-            <Text style={styles.heroSubtitle}>Starting in 12 days • Uttarakhand, India</Text>
+            <Text style={styles.heroSubtitle}>
+              Starting in 12 days • Uttarakhand, India
+            </Text>
           </View>
         </TouchableOpacity>
 
         {/* Tabs */}
         <View style={styles.tabsContainer}>
-          {['Journeys', 'Drafts', 'Moments'].map((tab) => (
-            <TouchableOpacity 
-              key={tab} 
+          {['Journeys', 'Drafts', 'Moments'].map(tab => (
+            <TouchableOpacity
+              key={tab}
               onPress={() => setActiveTab(tab)}
               style={[styles.tab, activeTab === tab && styles.activeTab]}
             >
-              <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === tab && styles.activeTabText,
+                ]}
+              >
                 {tab}
               </Text>
             </TouchableOpacity>
@@ -150,11 +208,20 @@ export function HomeScreen() {
                 <Text style={styles.seeAllText}>See all</Text>
               </TouchableOpacity>
             </View>
-            
+
             <FlatList
               data={JOURNEYS}
-              renderItem={({ item }) => <JourneyCard item={item} />}
-              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <JourneyCard
+                  item={item}
+                  onPress={() =>
+                    navigation.navigate('MyStories', {
+                      location: item.location,
+                    })
+                  }
+                />
+              )}
+              keyExtractor={item => item.id}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.journeysList}
@@ -162,15 +229,92 @@ export function HomeScreen() {
               decelerationRate="fast"
             />
 
+            {/* Explore Regions Section */}
+            <View style={[styles.sectionHeader, { marginTop: 32 }]}>
+              <Text style={styles.sectionTitle}>Explore Regions</Text>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.regionsList}
+            >
+              {REGIONS.map(region => (
+                <TouchableOpacity
+                  key={region.name}
+                  style={[
+                    styles.regionButton,
+                    { backgroundColor: region.color },
+                  ]}
+                  onPress={() => {
+                    if (region.name === 'All Places') {
+                      navigation.navigate('Explore', {
+                        initialType: 'state',
+                        initialValue: 'All',
+                      });
+                    } else {
+                      navigation.navigate('Explore', {
+                        initialType: 'state',
+                        initialValue: region.name,
+                      });
+                    }
+                  }}
+                >
+                  <Text style={styles.regionIcon}>{region.icon}</Text>
+                  <Text style={styles.regionName}>{region.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* Travel by Interest Section */}
+            <View style={[styles.sectionHeader, { marginTop: 32 }]}>
+              <Text style={styles.sectionTitle}>What's your plan?</Text>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.regionsList}
+            >
+              {[
+                { name: 'Family', icon: '👨‍👩‍👧‍👦', color: '#FDF2F8' },
+                { name: 'Friends', icon: '🍻', color: '#F5F3FF' },
+                { name: 'Hiking', icon: '🥾', color: '#ECFDF5' },
+                { name: 'Adventure', icon: '🧗', color: '#FFF7ED' },
+              ].map(item => (
+                <TouchableOpacity
+                  key={item.name}
+                  style={[
+                    styles.interestButton,
+                    { backgroundColor: item.color },
+                  ]}
+                  onPress={() =>
+                    navigation.navigate('Explore', {
+                      initialType: 'tag',
+                      initialValue: item.name,
+                    })
+                  }
+                >
+                  <Text style={styles.interestIcon}>{item.icon}</Text>
+                  <Text style={styles.interestName}>{item.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
             {/* Inspiration Section */}
             <View style={[styles.sectionHeader, { marginTop: 32 }]}>
               <Text style={styles.sectionTitle}>Travel Inspiration</Text>
             </View>
-            
+
             <View style={styles.inspirationContainer}>
               {INSPIRATION.map(item => (
                 <View key={item.id} style={{ marginBottom: 16 }}>
-                  <InspirationCard item={item} />
+                  <InspirationCard
+                    item={item}
+                    onPress={() =>
+                      navigation.navigate('DestinationDetail', {
+                        destinationId: item.id,
+                      })
+                    }
+                  />
                 </View>
               ))}
             </View>
@@ -180,11 +324,18 @@ export function HomeScreen() {
         {activeTab === 'Moments' && (
           <View style={styles.momentsContainer}>
             {MOMENTS.map(moment => (
-              <MomentCard key={moment.id} moment={moment} />
+              <MomentCard
+                key={moment.id}
+                moment={moment}
+                onPress={() =>
+                  navigation.navigate('MyStories', {
+                    location: moment.location,
+                  })
+                }
+              />
             ))}
           </View>
         )}
-        
       </ScrollView>
     </View>
   );
@@ -332,6 +483,48 @@ const styles = StyleSheet.create({
   },
   inspirationContainer: {
     paddingHorizontal: 24,
+  },
+  regionsList: {
+    paddingLeft: 24,
+    paddingRight: 8,
+  },
+  regionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 20,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+  },
+  regionIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  regionName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLORS.textMain,
+  },
+  interestButton: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderRadius: 24,
+    marginRight: 12,
+    width: 100,
+  },
+  interestIcon: {
+    fontSize: 28,
+    marginBottom: 8,
+  },
+  interestName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: COLORS.textMain,
   },
   momentsContainer: {
     paddingHorizontal: 24,

@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { COLORS } from '../theme/colors';
 
 const { width } = Dimensions.get('window');
 
 export interface Moment {
   id: string;
-  photoUrl: string;
+  photoUrl: any; // String for URL, number for local require
   title: string;
   description: string;
   date: string;
@@ -15,14 +15,18 @@ export interface Moment {
 
 interface MomentCardProps {
   moment: Moment;
+  onPress?: () => void;
 }
 
-export function MomentCard({ moment }: MomentCardProps) {
+export function MomentCard({ moment, onPress }: MomentCardProps) {
+  // Handle local images (required) vs remote URIs
+  const imageSource = typeof moment.photoUrl === 'string' ? { uri: moment.photoUrl } : moment.photoUrl;
+
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity activeOpacity={0.9} onPress={onPress} style={styles.cardContainer}>
       <View style={styles.imageContainer}>
         <Image 
-          source={{ uri: moment.photoUrl }} 
+          source={imageSource} 
           style={styles.image} 
           resizeMode="cover"
         />
@@ -34,13 +38,13 @@ export function MomentCard({ moment }: MomentCardProps) {
           <View style={styles.metaDot} />
           <Text style={styles.metaText}>{moment.location}</Text>
         </View>
-
+ 
         <Text style={styles.title}>{moment.title}</Text>
         <Text style={styles.description} numberOfLines={4}>
           {moment.description}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

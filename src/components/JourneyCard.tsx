@@ -9,7 +9,7 @@ export interface Journey {
   title: string;
   date: string;
   location: string;
-  imageUrl: string;
+  imageUrl: any; // String for URL, number for local require
   tags: string[];
 }
 
@@ -19,9 +19,12 @@ interface JourneyCardProps {
 }
 
 export function JourneyCard({ item, onPress }: JourneyCardProps) {
+  // Handle local images (required) vs remote URIs
+  const imageSource = typeof item.imageUrl === 'string' ? { uri: item.imageUrl } : item.imageUrl;
+
   return (
     <TouchableOpacity activeOpacity={0.9} style={styles.cardContainer} onPress={onPress}>
-      <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
+      <Image source={imageSource} style={styles.cardImage} />
       <View style={styles.cardOverlay}>
         <View style={styles.tagContainer}>
           <Text style={styles.tagText}>{item.location}</Text>

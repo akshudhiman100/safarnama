@@ -6,6 +6,8 @@ import { AuthScreen } from '../screens/AuthScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { EditProfileScreen } from '../screens/EditProfileScreen';
 import { MyStoriesScreen } from '../screens/MyStoriesScreen';
+import { DestinationDetailScreen } from '../screens/DestinationDetailScreen';
+import { ExploreScreen } from '../screens/ExploreScreen';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -13,7 +15,9 @@ export type RootStackParamList = {
   Home: undefined;
   Profile: undefined;
   EditProfile: undefined;
-  MyStories: undefined;
+  MyStories: { location?: string; title?: string };
+  DestinationDetail: { destinationId: string };
+  Explore: { initialType?: 'state' | 'tag'; initialValue?: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -30,6 +34,8 @@ export function AppNavigator() {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="MyStories" component={MyStoriesScreen} />
+      <Stack.Screen name="DestinationDetail" component={DestinationDetailScreen} />
+      <Stack.Screen name="Explore" component={ExploreScreen} />
     </Stack.Navigator>
   );
 }

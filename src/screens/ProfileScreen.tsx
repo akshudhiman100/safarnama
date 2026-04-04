@@ -39,6 +39,9 @@ export function ProfileScreen() {
   const navigation = useNavigation<ProfileNavigationProp>();
   const { name, photoUrl } = useUser();
 
+  // Handle local images (required) vs remote URIs
+  const avatarSource = typeof photoUrl === 'string' ? { uri: photoUrl } : photoUrl;
+
   // Generate a mock email based on user's name
   const email = `${name.split(' ')[0].toLowerCase()}.${name.split(' ')[1]?.toLowerCase() || 'user'}@icloud.com`;
 
@@ -55,7 +58,7 @@ export function ProfileScreen() {
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
              {photoUrl ? (
-               <Image source={{ uri: photoUrl }} style={styles.avatar} />
+               <Image source={avatarSource} style={styles.avatar} />
              ) : (
                <View style={styles.avatarPlaceholder} />
              )}

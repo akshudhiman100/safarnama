@@ -3,8 +3,9 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
 export interface Inspiration {
   id: string;
-  imageUrl: string;
+  imageUrl: any; // String for URL, number for local require
   title: string;
+  location: string;
 }
 
 interface InspirationCardProps {
@@ -13,9 +14,12 @@ interface InspirationCardProps {
 }
 
 export function InspirationCard({ item, onPress }: InspirationCardProps) {
+  // Handle local images (required) vs remote URIs
+  const imageSource = typeof item.imageUrl === 'string' ? { uri: item.imageUrl } : item.imageUrl;
+
   return (
     <TouchableOpacity activeOpacity={0.9} style={styles.cardContainer} onPress={onPress}>
-      <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
+      <Image source={imageSource} style={styles.cardImage} />
       <View style={styles.overlay}>
         <Text style={styles.title}>{item.title}</Text>
       </View>
