@@ -6,19 +6,22 @@ import { AppNavigator } from './src/navigation/AppNavigator';
 import { COLORS } from './src/theme/colors';
 
 import { UserProvider } from './src/context/UserContext';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store';
 
 function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
-      <UserProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
-      </UserProvider>
+      <Provider store={store}>
+        <UserProvider>
+          <NavigationContainer>
+            <AppNavigator />
+          </NavigationContainer>
+        </UserProvider>
+      </Provider>
     </SafeAreaProvider>
   );
 }
 
 export default App;
-

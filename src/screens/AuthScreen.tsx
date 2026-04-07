@@ -1,169 +1,169 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
-  TextInput, 
   TouchableOpacity, 
   Image, 
   Dimensions, 
-  KeyboardAvoidingView, 
-  Platform 
+  StatusBar,
+  SafeAreaView
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { COLORS } from '../theme/colors';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 type AuthNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Auth'>;
 
 export function AuthScreen() {
   const navigation = useNavigation<AuthNavigationProp>();
-  const [isLogin, setIsLogin] = useState(true);
-
-  const handleAuthenticate = () => {
-    // In a real app, perform Firebase/API auth here.
-    // For now, we simulate a successful login and navigate to Home.
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Home' }],
-    });
-  };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <Image 
         source={{ uri: 'https://images.unsplash.com/photo-1542314831-c6a4d142104d?q=80&w=1200&auto=format&fit=crop' }} 
-        style={StyleSheet.absoluteFillObject}
+        style={styles.backgroundImage}
       />
       <View style={styles.overlay} />
 
-      <View style={styles.content}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.logo}>Safarnama</Text>
-          <Text style={styles.subtitle}>Your journey begins here.</Text>
-        </View>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          <View style={styles.topSection}>
+            <Text style={styles.logo}>Safarnama</Text>
+            <Text style={styles.tagline}>Capture moments, share stories.</Text>
+          </View>
 
-        <View style={styles.formContainer}>
-          {!isLogin && (
-            <TextInput 
-              placeholder="Full Name"
-              placeholderTextColor="rgba(255,255,255,0.7)"
-              style={styles.input}
-            />
-          )}
-          <TextInput 
-            placeholder="Email Address"
-            placeholderTextColor="rgba(255,255,255,0.7)"
-            style={styles.input}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <TextInput 
-            placeholder="Password"
-            placeholderTextColor="rgba(255,255,255,0.7)"
-            style={styles.input}
-            secureTextEntry
-          />
-
-          <TouchableOpacity style={styles.button} onPress={handleAuthenticate}>
-            <Text style={styles.buttonText}>{isLogin ? 'Log In' : 'Sign Up'}</Text>
-          </TouchableOpacity>
-
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
+          <View style={styles.bottomSection}>
+            <Text style={styles.welcomeText}>
+              Discover the world through the eyes of fellow travelers.
             </Text>
-            <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
-              <Text style={styles.switchAction}>{isLogin ? 'Create one' : 'Log in'}</Text>
+
+            <TouchableOpacity 
+              style={styles.loginButton}
+              onPress={() => navigation.navigate('Login')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.loginButtonText}>Log In</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.signupButton}
+              onPress={() => navigation.navigate('Signup')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.signupButtonText}>Create an account</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.guestButton} onPress={() => navigation.navigate('Home')}>
+              <Text style={styles.guestButtonText}>Continue as Guest</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111',
+    backgroundColor: '#000',
+  },
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: width,
+    height: height,
+    opacity: 0.85,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)', // Darken background to make text readable
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  safeArea: {
+    flex: 1,
   },
   content: {
     flex: 1,
-    justifyContent: 'flex-end',
-    padding: 32,
-    paddingBottom: 60,
+    paddingHorizontal: 32,
+    justifyContent: 'space-between',
+    paddingBottom: 40,
   },
-  headerContainer: {
-    marginBottom: 40,
+  topSection: {
+    marginTop: 60,
+    alignItems: 'center',
   },
   logo: {
     fontSize: 48,
     fontWeight: '800',
     color: '#FFF',
-    letterSpacing: -1,
-    marginBottom: 8,
+    letterSpacing: -1.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 10,
   },
-  subtitle: {
-    fontSize: 18,
-    color: 'rgba(255,255,255,0.85)',
+  tagline: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.9)',
     fontWeight: '500',
+    marginTop: 8,
     letterSpacing: 0.5,
   },
-  formContainer: {
+  bottomSection: {
     width: '100%',
   },
-  input: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 16,
-    paddingHorizontal: 20,
-    paddingVertical: 18,
-    fontSize: 16,
+  welcomeText: {
+    fontSize: 20,
     color: '#FFF',
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 40,
+    lineHeight: 28,
   },
-  button: {
-    backgroundColor: COLORS.accent,
+  loginButton: {
+    backgroundColor: '#FFF',
     borderRadius: 16,
-    paddingVertical: 18,
+    height: 58,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
-    shadowColor: COLORS.accent,
+    marginBottom: 16,
+    shadowColor: '#FFF',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
     elevation: 5,
   },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 18,
+  loginButtonText: {
+    color: '#000',
+    fontSize: 16,
     fontWeight: '700',
-    letterSpacing: 0.5,
   },
-  switchContainer: {
-    flexDirection: 'row',
+  signupButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 16,
+    height: 58,
     justifyContent: 'center',
-    marginTop: 24,
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  switchText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 15,
-  },
-  switchAction: {
+  signupButtonText: {
     color: '#FFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
+  },
+  guestButton: {
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  guestButtonText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });

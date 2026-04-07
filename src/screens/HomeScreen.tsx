@@ -15,6 +15,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useUser } from '../context/UserContext';
 import { COLORS } from '../theme/colors';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import Feather from 'react-native-vector-icons/Feather';
 
 type HomeNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 import { JourneyCard, Journey } from '../components/JourneyCard';
@@ -118,225 +121,237 @@ export function HomeScreen() {
   const navigation = useNavigation<HomeNavigationProp>();
   const { name, photoUrl } = useUser();
   const [activeTab, setActiveTab] = useState('Journeys');
+  
+  // Get journeys from Redux
+  const journeys = useSelector((state: RootState) => state.stories.journeys);
 
   const avatarSource =
     typeof photoUrl === 'string' ? { uri: photoUrl } : photoUrl;
 
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 40 },
-        ]}
-      >
-        {/* Header Section */}
-        <View style={[styles.header, { marginTop: insets.top + 20 }]}>
-          <View>
-            <Text style={styles.greeting}>Welcome back,</Text>
-            <Text style={styles.appName}>
-              {name ? name.split(' ')[0] : 'Traveler'}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={styles.profileAvatar}
-            onPress={() => navigation.navigate('Profile')}
-          >
-            {photoUrl ? (
-              <Image source={avatarSource} style={styles.avatarImage} />
-            ) : (
-              <View
-                style={[
-                  styles.avatarImage,
-                  { backgroundColor: COLORS.surface },
-                ]}
-              />
-            )}
-          </TouchableOpacity>
+  const renderHeader = () => (
+    <View>
+      {/* Header Section */}
+      <View style={[styles.header, { marginTop: insets.top + 20 }]}>
+        <View>
+          <Text style={styles.greeting}>Welcome back,</Text>
+          <Text style={styles.appName}>
+            {name ? name.split(' ')[0] : 'Traveler'}
+          </Text>
         </View>
-
-        {/* Hero Section */}
         <TouchableOpacity
-          activeOpacity={0.9}
-          style={styles.heroContainer}
-          onPress={() =>
-            navigation.navigate('MyStories', { location: 'Uttarakhand' })
-          }
+          style={styles.profileAvatar}
+          onPress={() => navigation.navigate('Profile')}
         >
-          <Image
-            source={require('../assets/images/valley of flowes.png')}
-            style={styles.heroImage}
-          />
-          <View style={styles.heroOverlay}>
-            <View style={styles.heroBadge}>
-              <Text style={styles.heroBadgeText}>Next Adventure</Text>
-            </View>
-            <Text style={styles.heroTitle}>Valley of Flowers</Text>
-            <Text style={styles.heroSubtitle}>
-              Starting in 12 days • Uttarakhand, India
-            </Text>
-          </View>
-        </TouchableOpacity>
-
-        {/* Tabs */}
-        <View style={styles.tabsContainer}>
-          {['Journeys', 'Drafts', 'Moments'].map(tab => (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => setActiveTab(tab)}
-              style={[styles.tab, activeTab === tab && styles.activeTab]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab && styles.activeTabText,
-                ]}
-              >
-                {tab}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Tab Content */}
-        {activeTab === 'Journeys' && (
-          <View>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Recent Travelers</Text>
-              <TouchableOpacity>
-                <Text style={styles.seeAllText}>See all</Text>
-              </TouchableOpacity>
-            </View>
-
-            <FlatList
-              data={JOURNEYS}
-              renderItem={({ item }) => (
-                <JourneyCard
-                  item={item}
-                  onPress={() =>
-                    navigation.navigate('MyStories', {
-                      location: item.location,
-                    })
-                  }
-                />
-              )}
-              keyExtractor={item => item.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.journeysList}
-              snapToInterval={width * 0.7 + 20}
-              decelerationRate="fast"
+          {photoUrl ? (
+            <Image source={avatarSource} style={styles.avatarImage} />
+          ) : (
+            <View
+              style={[styles.avatarImage, { backgroundColor: COLORS.surface }]}
             />
+          )}
+        </TouchableOpacity>
+      </View>
 
-            {/* Explore Regions Section */}
-            <View style={[styles.sectionHeader, { marginTop: 32 }]}>
-              <Text style={styles.sectionTitle}>Explore Regions</Text>
-            </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.regionsList}
-            >
-              {REGIONS.map(region => (
-                <TouchableOpacity
-                  key={region.name}
-                  style={[
-                    styles.regionButton,
-                    { backgroundColor: region.color },
-                  ]}
-                  onPress={() => {
-                    if (region.name === 'All Places') {
-                      navigation.navigate('Explore', {
-                        initialType: 'state',
-                        initialValue: 'All',
-                      });
-                    } else {
-                      navigation.navigate('Explore', {
-                        initialType: 'state',
-                        initialValue: region.name,
-                      });
-                    }
-                  }}
-                >
-                  <Text style={styles.regionIcon}>{region.icon}</Text>
-                  <Text style={styles.regionName}>{region.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            {/* Travel by Interest Section */}
-            <View style={[styles.sectionHeader, { marginTop: 32 }]}>
-              <Text style={styles.sectionTitle}>What's your plan?</Text>
-            </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.regionsList}
-            >
-              {[
-                { name: 'Family', icon: '👨‍👩‍👧‍👦', color: '#FDF2F8' },
-                { name: 'Friends', icon: '🍻', color: '#F5F3FF' },
-                { name: 'Hiking', icon: '🥾', color: '#ECFDF5' },
-                { name: 'Adventure', icon: '🧗', color: '#FFF7ED' },
-              ].map(item => (
-                <TouchableOpacity
-                  key={item.name}
-                  style={[
-                    styles.interestButton,
-                    { backgroundColor: item.color },
-                  ]}
-                  onPress={() =>
-                    navigation.navigate('Explore', {
-                      initialType: 'tag',
-                      initialValue: item.name,
-                    })
-                  }
-                >
-                  <Text style={styles.interestIcon}>{item.icon}</Text>
-                  <Text style={styles.interestName}>{item.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            {/* Inspiration Section */}
-            <View style={[styles.sectionHeader, { marginTop: 32 }]}>
-              <Text style={styles.sectionTitle}>Travel Inspiration</Text>
-            </View>
-
-            <View style={styles.inspirationContainer}>
-              {INSPIRATION.map(item => (
-                <View key={item.id} style={{ marginBottom: 16 }}>
-                  <InspirationCard
-                    item={item}
-                    onPress={() =>
-                      navigation.navigate('DestinationDetail', {
-                        destinationId: item.id,
-                      })
-                    }
-                  />
-                </View>
-              ))}
-            </View>
+      {/* Hero Section */}
+      <TouchableOpacity
+        activeOpacity={0.9}
+        style={styles.heroContainer}
+        onPress={() =>
+          navigation.navigate('MyStories', { location: 'Uttarakhand' })
+        }
+      >
+        <Image
+          source={require('../assets/images/valley of flowes.png')}
+          style={styles.heroImage}
+        />
+        <View style={styles.heroOverlay}>
+          <View style={styles.heroBadge}>
+            <Text style={styles.heroBadgeText}>Next Adventure</Text>
           </View>
-        )}
+          <Text style={styles.heroTitle}>Valley of Flowers</Text>
+          <Text style={styles.heroSubtitle}>
+            Starting in 12 days • Uttarakhand, India
+          </Text>
+        </View>
+      </TouchableOpacity>
 
-        {activeTab === 'Moments' && (
-          <View style={styles.momentsContainer}>
-            {MOMENTS.map(moment => (
-              <MomentCard
-                key={moment.id}
-                moment={moment}
+      {/* Tabs */}
+      <View style={styles.tabsContainer}>
+        {['Journeys', 'Drafts', 'Moments'].map(tab => (
+          <TouchableOpacity
+            key={tab}
+            onPress={() => setActiveTab(tab)}
+            style={[styles.tab, activeTab === tab && styles.activeTab]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === tab && styles.activeTabText,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Tab Header Content (if Tab is Journeys) */}
+      {activeTab === 'Journeys' && (
+        <View>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recent Travelers</Text>
+            <TouchableOpacity>
+              <Text style={styles.seeAllText}>See all</Text>
+            </TouchableOpacity>
+          </View>
+
+          <FlatList
+            data={journeys}
+            renderItem={({ item }) => (
+              <JourneyCard
+                item={item}
                 onPress={() =>
                   navigation.navigate('MyStories', {
-                    location: moment.location,
+                    location: item.location,
                   })
                 }
               />
-            ))}
+            )}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.journeysList}
+            snapToInterval={width * 0.7 + 20}
+            decelerationRate="fast"
+          />
+
+          {/* Explore Regions Section */}
+          <View style={[styles.sectionHeader, { marginTop: 32 }]}>
+            <Text style={styles.sectionTitle}>Explore Regions</Text>
           </View>
-        )}
-      </ScrollView>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.regionsList}
+          >
+            {REGIONS.map(region => (
+              <TouchableOpacity
+                key={region.name}
+                style={[styles.regionButton, { backgroundColor: region.color }]}
+                onPress={() => {
+                  if (region.name === 'All Places') {
+                    navigation.navigate('Explore', {
+                      initialType: 'state',
+                      initialValue: 'All',
+                    });
+                  } else {
+                    navigation.navigate('Explore', {
+                      initialType: 'state',
+                      initialValue: region.name,
+                    });
+                  }
+                }}
+              >
+                <Text style={styles.regionIcon}>{region.icon}</Text>
+                <Text style={styles.regionName}>{region.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Travel by Interest Section */}
+          <View style={[styles.sectionHeader, { marginTop: 32 }]}>
+            <Text style={styles.sectionTitle}>What's your plan?</Text>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.regionsList}
+          >
+            {[
+              { name: 'Family', icon: '👨‍👩‍👧‍👦', color: '#FDF2F8' },
+              { name: 'Friends', icon: '🍻', color: '#F5F3FF' },
+              { name: 'Hiking', icon: '🥾', color: '#ECFDF5' },
+              { name: 'Adventure', icon: '🧗', color: '#FFF7ED' },
+            ].map(item => (
+              <TouchableOpacity
+                key={item.name}
+                style={[styles.interestButton, { backgroundColor: item.color }]}
+                onPress={() =>
+                  navigation.navigate('Explore', {
+                    initialType: 'tag',
+                    initialValue: item.name,
+                  })
+                }
+              >
+                <Text style={styles.interestIcon}>{item.icon}</Text>
+                <Text style={styles.interestName}>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Inspiration Section Title */}
+          <View style={[styles.sectionHeader, { marginTop: 32 }]}>
+            <Text style={styles.sectionTitle}>Travel Inspiration</Text>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      {activeTab === 'Moments' ? (
+        <FlatList
+          data={MOMENTS}
+          ListHeaderComponent={renderHeader()}
+          renderItem={({ item }) => (
+            <View style={{ paddingHorizontal: 24 }}>
+              <MomentCard
+                moment={item}
+                onPress={() =>
+                  navigation.navigate('MyStories', {
+                    location: item.location,
+                  })
+                }
+              />
+            </View>
+          )}
+          keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
+        />
+      ) : (
+        <FlatList
+          data={activeTab === 'Journeys' ? INSPIRATION : []}
+          ListHeaderComponent={renderHeader()}
+          renderItem={({ item }) =>
+            activeTab === 'Journeys' ? (
+              <View style={{ paddingHorizontal: 24, marginBottom: 16 }}>
+                <InspirationCard
+                  item={item}
+                  onPress={() =>
+                    navigation.navigate('DestinationDetail', {
+                      destinationId: item.id,
+                    })
+                  }
+                />
+              </View>
+            ) : null
+          }
+          keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
+        />
+      )}
+      
+      {/* Floating Action Button for Add Story */}
+      <TouchableOpacity 
+        style={[styles.fab, { bottom: insets.bottom + 20 }]}
+        onPress={() => navigation.navigate('AddStory')}
+        activeOpacity={0.8}
+      >
+        <Feather name="plus" size={32} color="#FFF" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -529,5 +544,22 @@ const styles = StyleSheet.create({
   momentsContainer: {
     paddingHorizontal: 24,
     paddingTop: 8,
+  },
+  fab: {
+    position: 'absolute',
+    right: 24,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: COLORS.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 8,
+    borderWidth: 4,
+    borderColor: '#FFF',
   },
 });
