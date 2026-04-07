@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Switch, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Switch,
+  ScrollView,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
@@ -9,27 +17,53 @@ import { useUser } from '../context/UserContext';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
+type ProfileNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Profile'
+>;
 
-const IconWrapper = ({ iconName, color = '#374151', bgColor = '#FFFFFF' }: any) => (
+const IconWrapper = ({
+  iconName,
+  color = '#374151',
+  bgColor = '#FFFFFF',
+}: any) => (
   <View style={[styles.iconWrapper, { backgroundColor: bgColor }]}>
     <Feather name={iconName} size={18} color={color} />
   </View>
 );
 
-const RowItem = ({ iconName, title, isLast, rightElement, onRowPress, titleColor, iconColor, iconBgColor }: any) => (
-  <TouchableOpacity 
-    style={[styles.rowContainer, !isLast && styles.rowBorder]} 
+const RowItem = ({
+  iconName,
+  title,
+  isLast,
+  rightElement,
+  onRowPress,
+  titleColor,
+  iconColor,
+  iconBgColor,
+}: any) => (
+  <TouchableOpacity
+    style={[styles.rowContainer, !isLast && styles.rowBorder]}
     onPress={onRowPress}
     disabled={!onRowPress}
     activeOpacity={0.7}
   >
     <View style={styles.rowLeft}>
-      <IconWrapper iconName={iconName} color={iconColor} bgColor={iconBgColor} />
-      <Text style={[styles.rowTitle, titleColor && { color: titleColor }]}>{title}</Text>
+      <IconWrapper
+        iconName={iconName}
+        color={iconColor}
+        bgColor={iconBgColor}
+      />
+      <Text style={[styles.rowTitle, titleColor && { color: titleColor }]}>
+        {title}
+      </Text>
     </View>
     <View style={styles.rowRight}>
-      {rightElement !== undefined ? rightElement : <Feather name="chevron-right" size={20} color="#9CA3AF" />}
+      {rightElement !== undefined ? (
+        rightElement
+      ) : (
+        <Feather name="chevron-right" size={20} color="#9CA3AF" />
+      )}
     </View>
   </TouchableOpacity>
 );
@@ -37,36 +71,46 @@ const RowItem = ({ iconName, title, isLast, rightElement, onRowPress, titleColor
 export function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavigationProp>();
-  const { name, photoUrl } = useUser();
+  const { name, email, photoUrl, logout } = useUser();
 
   // Handle local images (required) vs remote URIs
-  const avatarSource = typeof photoUrl === 'string' ? { uri: photoUrl } : photoUrl;
+  const avatarSource =
+    typeof photoUrl === 'string' ? { uri: photoUrl } : photoUrl;
 
-  // Generate a mock email based on user's name
-  const email = `${name.split(' ')[0].toLowerCase()}.${name.split(' ')[1]?.toLowerCase() || 'user'}@icloud.com`;
+  const handleLogout = async () => {
+    await logout();
+    navigation.reset({ index: 0, routes: [{ name: 'Auth' }] });
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 20, paddingBottom: insets.bottom + 40 }}>
-        
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: insets.top + 20,
+          paddingBottom: insets.bottom + 40,
+        }}
+      >
         {/* Navigation Back */}
-        <TouchableOpacity style={styles.backButtonTop} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.backButtonTop}
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.backChevron}>‹</Text>
         </TouchableOpacity>
 
         {/* Profile Header */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
-             {photoUrl ? (
-               <Image source={avatarSource} style={styles.avatar} />
-             ) : (
-               <View style={styles.avatarPlaceholder} />
-             )}
+            {photoUrl ? (
+              <Image source={avatarSource} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatarPlaceholder} />
+            )}
           </View>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.email}>{email}</Text>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.editProfileBtn}
             onPress={() => navigation.navigate('EditProfile')}
           >
@@ -78,9 +122,9 @@ export function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Content</Text>
           <View style={styles.card}>
-            <RowItem 
-              iconName="grid" 
-              title="My stories" 
+            <RowItem
+              iconName="grid"
+              title="My stories"
               rightElement={
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>2</Text>
@@ -88,11 +132,7 @@ export function ProfileScreen() {
               }
               onRowPress={() => navigation.navigate('MyStories')}
             />
-            <RowItem 
-              iconName="message-square" 
-              title="Support" 
-              isLast 
-            />
+            <RowItem iconName="message-square" title="Support" isLast />
           </View>
         </View>
 
@@ -100,21 +140,18 @@ export function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account</Text>
           <View style={styles.card}>
-            <RowItem 
-              iconName="log-out" 
-              title="Logout" 
+            <RowItem
+              iconName="log-out"
+              title="Logout"
               iconColor="#EF4444"
               iconBgColor="#FEF2F2"
               titleColor="#EF4444"
-              rightElement={<View/>}
-              isLast 
-              onRowPress={() => {
-                navigation.reset({ index: 0, routes: [{ name: 'Auth' }] });
-              }}
+              rightElement={<View />}
+              isLast
+              onRowPress={handleLogout}
             />
           </View>
         </View>
-
       </ScrollView>
     </View>
   );

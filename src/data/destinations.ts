@@ -301,7 +301,7 @@ export const DESTINATIONS: Destination[] = [
     title: 'The Middle Land',
     location: 'Himachal, India',
     state: 'Himachal',
-    imageUrl: require('../assets/images/kinnaur.png'),
+    imageUrl: require('../assets/images/spiti.png'),
     description:
       'Spiti Valley is a high-altitude cold desert, often called "Little Tibet." It is a land of stark beauty, ancient monasteries, and remote villages tucked away in the rugged Himalayas.',
     religion:

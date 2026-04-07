@@ -215,8 +215,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: COLORS.textMain,
     // letterSpacing: -0.5,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   filterSection: {
     paddingVertical: 16,
